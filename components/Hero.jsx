@@ -17,8 +17,8 @@ const CARDS = [
     depth: 44,
     delay: 0.95,
     float: "float-b",
-    // tilted card that runs off the right edge, like the second can
-    className: "right-[-10%] top-[30%] z-10 w-[52%] sm:right-[-4%] sm:w-[44%] lg:right-[-16%] lg:top-[26%] lg:w-[50%]",
+    // tilted card behind the front one; sized so its rotated corners stay on screen at every width
+    className: "right-[5%] top-[42%] z-10 w-[44%] sm:right-[8%] sm:w-[38%] lg:right-[4%] lg:top-[40%] lg:w-[42%]",
   },
 ];
 
@@ -94,7 +94,7 @@ export default function Hero({ start, pointer, slotRef }) {
       {/* giant outlined word in the background */}
       <motion.span
         aria-hidden
-        className="font-display pointer-events-none absolute bottom-[-4%] right-[-2%] select-none text-[34vw] uppercase leading-none text-transparent [-webkit-text-stroke:1px_rgba(191,191,195,0.08)] lg:bottom-auto lg:top-[8%] lg:text-[22vw]"
+        className="font-display pointer-events-none absolute bottom-[-4%] right-[-2%] select-none text-[24vw] uppercase leading-none text-transparent [-webkit-text-stroke:1px_rgba(191,191,195,0.08)] lg:bottom-auto lg:top-[8%] lg:text-[15vw]"
         initial={{ opacity: 0, x: 80 }}
         animate={start ? { opacity: 1, x: 0 } : { opacity: 0, x: 80 }}
         transition={{ duration: 1.6, ease: EXPO, delay: 0.4 }}
@@ -106,7 +106,7 @@ export default function Hero({ start, pointer, slotRef }) {
         {/* copy */}
         <div className="relative z-30">
           <motion.div
-            className="mb-5 flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.4em] text-steel sm:text-xs"
+            className="font-label mb-5 flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.4em] text-steel sm:text-xs"
             variants={fade}
             custom={0.2}
             initial="hidden"
@@ -116,7 +116,7 @@ export default function Hero({ start, pointer, slotRef }) {
             Where warriors are made
           </motion.div>
 
-          <h1 className="font-display text-metal whitespace-nowrap text-[13vw] uppercase sm:text-[11vw] lg:text-[clamp(4rem,6.4vw,5.75rem)]">
+          <h1 className="font-display text-metal whitespace-nowrap text-[9.6vw] uppercase lg:text-[clamp(2.75rem,5vw,4.25rem)]">
             {["Train harder", "Live stronger"].map((t, i) => (
               <span key={t} className="block overflow-hidden pb-[0.06em]">
                 <motion.span className="block" variants={line} custom={i} initial="hidden" animate={state}>

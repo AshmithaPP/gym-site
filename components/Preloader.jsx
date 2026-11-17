@@ -75,7 +75,7 @@ export default function Preloader({ onReveal, onFinish }) {
       </motion.div>
 
       <motion.p
-        className="relative mt-6 text-center text-[10px] font-medium uppercase tracking-[0.45em] text-steel sm:text-xs"
+        className="font-label relative mt-6 text-center text-[10px] font-medium uppercase tracking-[0.45em] text-steel sm:text-xs"
         initial={{ opacity: 0, y: 10 }}
         animate={stage === "count" ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
         transition={{ duration: 0.5, delay: stage === "count" ? 0.5 : 0 }}
@@ -85,7 +85,7 @@ export default function Preloader({ onReveal, onFinish }) {
 
       {/* rolling counter, bottom-right like the reference */}
       <div className="absolute bottom-6 right-5 flex items-end gap-3 sm:bottom-10 sm:right-10">
-        <span className="mb-2 text-[10px] uppercase tracking-[0.35em] text-steel sm:mb-4 sm:text-xs">Loading</span>
+        <span className="font-label mb-2 text-[10px] uppercase tracking-[0.35em] text-steel sm:mb-4 sm:text-xs">Loading</span>
         <div className="relative h-[64px] overflow-hidden drop-shadow-[0_8px_18px_rgba(0,0,0,0.6)] sm:h-[96px] lg:h-[128px]">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.span

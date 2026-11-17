@@ -127,10 +127,10 @@ export default function Features({ slotRef }) {
         variants={{ show: { transition: { staggerChildren: 0.1 } } }}
       >
         {[
-          <p key="k" className="text-[10px] font-medium uppercase tracking-[0.4em] text-steel sm:text-xs">
+          <p key="k" className="font-label text-[10px] font-medium uppercase tracking-[0.4em] text-steel sm:text-xs">
             Why Legion
           </p>,
-          <h2 key="h" className="font-display text-metal mt-4 text-[clamp(3rem,11vw,6rem)] uppercase">
+          <h2 key="h" className="font-display text-metal mt-4 text-[clamp(2.2rem,9vw,4.75rem)] uppercase">
             Built different
           </h2>,
           <p key="p" className="mx-auto mt-5 max-w-lg text-sm leading-relaxed text-steel sm:text-base">

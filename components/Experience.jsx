@@ -9,6 +9,8 @@ import Pricing from "./Pricing";
 import Features from "./Features";
 import TravelCard from "./TravelCard";
 import Footer from "./Footer";
+import EnquirySection from "./EnquirySection";
+import WhatsAppButton from "./WhatsAppButton";
 
 export default function Experience() {
   const [revealed, setRevealed] = useState(false);
@@ -44,6 +46,7 @@ export default function Experience() {
         <Spotlight slotRef={spotSlotRef} />
         <Pricing slotRef={priceSlotRef} storyRef={storyRef} onChapter={setChapter} />
         <Features slotRef={whySlotRef} />
+        <EnquirySection />
         <TravelCard
           start={revealed}
           stageRef={stageRef}
@@ -54,6 +57,7 @@ export default function Experience() {
         />
       </main>
       <Footer />
+      <WhatsAppButton />
     </>
   );
 }

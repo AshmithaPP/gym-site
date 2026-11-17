@@ -14,8 +14,8 @@ export default function PhotoCard({ src, alt, title, sub, labelOpacity, sizes = 
           style={labelOpacity ? { opacity: labelOpacity } : undefined}
           className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-carbon via-carbon/70 to-transparent px-4 pb-4 pt-14 sm:px-6 sm:pb-6"
         >
-          <p className="font-display text-metal text-3xl uppercase sm:text-4xl lg:text-5xl">{title}</p>
-          <p className="mt-1 text-[10px] uppercase tracking-[0.4em] text-silver sm:text-xs">{sub}</p>
+          <p className="font-display text-metal text-2xl uppercase leading-tight sm:text-3xl lg:text-2xl xl:text-4xl">{title}</p>
+          <p className="font-label mt-1 text-[10px] uppercase tracking-[0.4em] text-silver sm:text-xs">{sub}</p>
         </motion.div>
       )}
     </div>

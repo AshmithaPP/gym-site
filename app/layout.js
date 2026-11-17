@@ -1,10 +1,18 @@
-import { Roboto } from "next/font/google";
+import { Cinzel, Michroma } from "next/font/google";
 import "./globals.css";
 
-const roboto = Roboto({
-  variable: "--font-roboto",
+// Closest free match to the logo's carved, flared lettering — used across the whole page.
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
   subsets: ["latin"],
-  axes: ["wdth"],
+  display: "swap",
+});
+
+// Wide technical face matching the logo's "WHERE WARRIORS ARE MADE" tagline — small labels only.
+const michroma = Michroma({
+  variable: "--font-michroma",
+  subsets: ["latin"],
+  weight: "400",
   display: "swap",
 });
 
@@ -20,7 +28,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${roboto.variable} h-full antialiased`}>
+    <html lang="en" className={`${cinzel.variable} ${michroma.variable} h-full antialiased`}>
       <body className="is-loading min-h-full">{children}</body>
     </html>
   );

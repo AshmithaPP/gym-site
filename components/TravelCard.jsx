@@ -44,6 +44,7 @@ export default function TravelCard({ start, stageRef, slots, storyRef, chapter, 
     cap: useMotionValue(Infinity),
     offX: useMotionValue(0),
     e1: useMotionValue(1),
+    h1: useMotionValue(1),
     e2: useMotionValue(2),
     e3: useMotionValue(2),
     ready: useMotionValue(0),
@@ -88,10 +89,13 @@ export default function TravelCard({ start, stageRef, slots, storyRef, chapter, 
       const e1 = Math.max(1, rb.top + sy + rb.height / 2 - vh / 2);
       // C reaches its resting place: vertically centred (desktop pins there)
       const pinTop = Math.max(90, (vh - rc.height) / 2);
-      const e2 = Math.max(e1 + 1, desktop ? rc.top + sy - pinTop : rc.top + sy + rc.height / 2 - vh / 2);
+      // hold still in the Spotlight slot for a stretch before flying on to Pricing
+      const h1 = e1 + vh * 0.3;
+      const e2 = Math.max(h1 + 1, desktop ? rc.top + sy - pinTop : rc.top + sy + rc.height / 2 - vh / 2);
       // pinning ends when the card's bottom meets the end of the chapters
       const e3 = desktop ? Math.max(e2, rs.bottom + sy - pinTop - rc.height) : e2;
       g.e1.set(e1);
+      g.h1.set(h1);
       g.e2.set(e2);
       g.e3.set(e3);
       // Last flight. It only starts once D is close (so on phones the card doesn't drift over
@@ -140,7 +144,7 @@ export default function TravelCard({ start, stageRef, slots, storyRef, chapter, 
 
   const { scrollY } = useScroll();
   const p1 = useTransform([scrollY, g.e1], ([y, e1]) => clamp01(y / e1));
-  const p2 = useTransform([scrollY, g.e1, g.e2], ([y, e1, e2]) => clamp01((y - e1) / (e2 - e1)));
+  const p2 = useTransform([scrollY, g.h1, g.e2], ([y, h1, e2]) => clamp01((y - h1) / (e2 - h1)));
   const pin = useTransform([scrollY, g.e2, g.e3], ([y, e2, e3]) => Math.min(Math.max(y - e2, 0), e3 - e2));
   const s1 = useSpring(p1, SPRING);
   const p3 = useTransform([scrollY, g.s4, g.e4], ([y, s4, e4]) => clamp01((y - s4) / Math.max(1, e4 - s4)));
@@ -218,8 +222,8 @@ export default function TravelCard({ start, stageRef, slots, storyRef, chapter, 
                 style={{ opacity: heroLabel }}
                 className="absolute inset-x-0 bottom-0 z-[3] bg-gradient-to-t from-carbon via-carbon/70 to-transparent px-4 pb-4 pt-14 sm:px-6 sm:pb-6"
               >
-                <p className="font-display text-metal text-3xl uppercase sm:text-4xl lg:text-5xl">Strength</p>
-                <p className="mt-1 text-[10px] uppercase tracking-[0.4em] text-silver sm:text-xs">training</p>
+                <p className="font-display text-metal text-2xl uppercase leading-tight sm:text-3xl lg:text-2xl xl:text-4xl">Strength</p>
+                <p className="font-label mt-1 text-[10px] uppercase tracking-[0.4em] text-silver sm:text-xs">training</p>
               </motion.div>
 
               {/* pricing-story label: chapter progress + current chapter */}
@@ -246,10 +250,10 @@ export default function TravelCard({ start, stageRef, slots, storyRef, chapter, 
                       exit={{ y: -16, opacity: 0 }}
                       transition={{ duration: 0.45, ease: EXPO }}
                     >
-                      <p className="text-[10px] uppercase tracking-[0.4em] text-silver sm:text-xs">
+                      <p className="font-label text-[10px] uppercase tracking-[0.4em] text-silver sm:text-xs">
                         Chapter {String(storyIndex + 1).padStart(2, "0")}
                       </p>
-                      <p className="font-display text-metal mt-1 text-3xl uppercase sm:text-4xl lg:text-5xl">{ch.step}</p>
+                      <p className="font-display text-metal mt-1 text-2xl uppercase leading-tight sm:text-3xl lg:text-2xl xl:text-4xl">{ch.step}</p>
                     </motion.div>
                   </AnimatePresence>
                 </div>
@@ -260,8 +264,8 @@ export default function TravelCard({ start, stageRef, slots, storyRef, chapter, 
                 style={{ opacity: whyLabel }}
                 className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] bg-gradient-to-t from-carbon via-carbon/70 to-transparent px-4 pb-4 pt-14 sm:px-6 sm:pb-6"
               >
-                <p className="text-[10px] uppercase tracking-[0.4em] text-silver sm:text-xs">Why Legion</p>
-                <p className="font-display text-metal mt-1 text-3xl uppercase sm:text-4xl xl:text-5xl">Built different</p>
+                <p className="font-label text-[10px] uppercase tracking-[0.4em] text-silver sm:text-xs">Why Legion</p>
+                <p className="font-display text-metal mt-1 text-2xl uppercase leading-tight sm:text-3xl lg:text-2xl xl:text-4xl">Built different</p>
               </motion.div>
             </div>
           </div>

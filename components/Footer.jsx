@@ -58,11 +58,11 @@ export default function Footer() {
       {/* soft top glow */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(ellipse_60%_100%_at_50%_0%,rgba(228,228,231,0.08),transparent_70%)]" />
 
-      <motion.div style={{ y: contentY }} className="relative mx-auto max-w-7xl px-4 pb-10 pt-20 sm:px-6 sm:pt-24 lg:px-10 lg:pt-28">
+      <motion.div style={{ y: contentY }} className="relative mx-auto max-w-7xl px-4 pb-28 pt-20 sm:pb-24 sm:px-6 sm:pt-24 lg:px-10 lg:pt-28">
         {/* CTA */}
         <motion.div {...inView} className="grid items-end gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
           <div>
-            <motion.p variants={rise} className="text-[10px] font-medium uppercase tracking-[0.4em] text-steel sm:text-xs">
+            <motion.p variants={rise} className="font-label text-[10px] font-medium uppercase tracking-[0.4em] text-steel sm:text-xs">
               Your story starts today
             </motion.p>
             <motion.h2 variants={rise} custom={1} className="font-display text-metal mt-4 text-[clamp(2rem,6vw,3.75rem)] uppercase">
@@ -138,7 +138,7 @@ export default function Footer() {
 
           {FOOTER_LINKS.map((col, ci) => (
             <motion.nav key={col.title} variants={rise} custom={ci + 1} aria-label={col.title}>
-              <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-silver">{col.title}</p>
+              <p className="font-label text-[11px] font-bold uppercase tracking-[0.3em] text-silver">{col.title}</p>
               <ul className="mt-5 space-y-3">
                 {col.links.map((l) => (
                   <li key={l.label}>
@@ -154,7 +154,7 @@ export default function Footer() {
 
           {contact.length > 0 && (
             <motion.div variants={rise} custom={3} className="col-span-2 lg:col-span-1">
-              <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-silver">Contact</p>
+              <p className="font-label text-[11px] font-bold uppercase tracking-[0.3em] text-silver">Contact</p>
               <ul className="mt-5 space-y-3">
                 {contact.map((c) => (
                   <li key={c.label} className="text-sm">
@@ -184,7 +184,7 @@ export default function Footer() {
             whileHover={{ y: -4 }}
             whileTap={{ scale: 0.92 }}
             transition={{ type: "spring", stiffness: 400, damping: 12 }}
-            className="group inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.25em] text-silver"
+            className="font-label group inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.25em] text-silver"
           >
             Back to top
             <span className="btn-metal flex h-9 w-9 items-center justify-center rounded-full">
