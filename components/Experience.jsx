@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useMotionValue, useSpring } from "framer-motion";
-import Preloader from "./Preloader";
 import Hero from "./Hero";
 import Spotlight from "./Spotlight";
 import Pricing from "./Pricing";
@@ -10,11 +9,12 @@ import Features from "./Features";
 import TravelCard from "./TravelCard";
 import Footer from "./Footer";
 import EnquirySection from "./EnquirySection";
+import Testimonials from "./Testimonials";
 import WhatsAppButton from "./WhatsAppButton";
+import OfferBar from "./OfferBar";
+import { EnquiryProvider } from "./Enquiry";
 
 export default function Experience() {
-  const [revealed, setRevealed] = useState(false);
-  const [loaderGone, setLoaderGone] = useState(false);
   const [chapter, setChapter] = useState(0);
 
   const stageRef = useRef(null);
@@ -31,24 +31,17 @@ export default function Experience() {
   const my = useSpring(rawY, { stiffness: 80, damping: 14 });
   const pointer = { rawX, rawY, mx, my };
 
-  const handleReveal = useCallback(() => setRevealed(true), []);
-  const handleFinish = useCallback(() => setLoaderGone(true), []);
-
-  useEffect(() => {
-    if (loaderGone) document.body.classList.remove("is-loading");
-  }, [loaderGone]);
-
   return (
-    <>
-      {!loaderGone && <Preloader onReveal={handleReveal} onFinish={handleFinish} />}
+    <EnquiryProvider>
       <main ref={stageRef} className="relative overflow-clip">
-        <Hero start={revealed} pointer={pointer} slotRef={heroSlotRef} />
+        <Hero start={true} pointer={pointer} slotRef={heroSlotRef} />
         <Spotlight slotRef={spotSlotRef} />
         <Pricing slotRef={priceSlotRef} storyRef={storyRef} onChapter={setChapter} />
         <Features slotRef={whySlotRef} />
+        <Testimonials />
         <EnquirySection />
         <TravelCard
-          start={revealed}
+          start={true}
           stageRef={stageRef}
           slots={[heroSlotRef, spotSlotRef, priceSlotRef, whySlotRef]}
           storyRef={storyRef}
@@ -58,6 +51,7 @@ export default function Experience() {
       </main>
       <Footer />
       <WhatsAppButton />
-    </>
+      <OfferBar />
+    </EnquiryProvider>
   );
 }

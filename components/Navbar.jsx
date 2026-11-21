@@ -2,12 +2,23 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 
-const LINKS = ["Home", "About", "Programs", "Trainers", "Pricing"];
+// "/#…" links work from every page: on the home page they just scroll to the section.
+const LINKS = [
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Programs", href: "/#programs" },
+  { label: "Trainers", href: "/about#crew" },
+  { label: "Pricing", href: "/#pricing" },
+];
 
 export default function Navbar({ start }) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const isActive = (href) => (href === "/about" ? pathname === "/about" : false);
 
   return (
     <motion.header
@@ -17,7 +28,7 @@ export default function Navbar({ start }) {
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.35 }}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-10 lg:py-7">
-        <a href="#home" aria-label="Legion Fitness home" className="shrink-0">
+        <Link href="/" aria-label="Legion Fitness home" className="shrink-0">
           <Image
             src="/images/legion-logo.png"
             alt="Legion Fitness — Where warriors are made"
@@ -26,29 +37,36 @@ export default function Navbar({ start }) {
             priority
             className="h-7 w-auto sm:h-9 lg:h-10"
           />
-        </a>
+        </Link>
 
         <ul className="hidden items-center gap-8 lg:flex xl:gap-11">
           {LINKS.map((l) => (
-            <li key={l}>
-              <a
-                href={`#${l.toLowerCase()}`}
-                className="group relative text-[12px] font-medium uppercase tracking-[0.2em] text-steel transition-colors hover:text-platinum"
+            <li key={l.label}>
+              <Link
+                href={l.href}
+                aria-current={isActive(l.href) ? "page" : undefined}
+                className={`group relative text-[12px] font-medium uppercase tracking-[0.2em] transition-colors hover:text-platinum ${
+                  isActive(l.href) ? "text-platinum" : "text-steel"
+                }`}
               >
-                {l}
-                <span className="absolute -bottom-1.5 left-0 h-px w-full origin-left scale-x-0 bg-silver transition-transform duration-300 group-hover:scale-x-100" />
-              </a>
+                {l.label}
+                <span
+                  className={`absolute -bottom-1.5 left-0 h-px w-full origin-left bg-silver transition-transform duration-300 group-hover:scale-x-100 ${
+                    isActive(l.href) ? "scale-x-100" : "scale-x-0"
+                  }`}
+                />
+              </Link>
             </li>
           ))}
         </ul>
 
         <div className="flex items-center gap-3">
-          <a
-            href="#enquiry"
+          <Link
+            href="/#enquiry"
             className="btn-metal hidden rounded-md px-5 py-2.5 text-[12px] font-bold uppercase tracking-[0.15em] transition-transform hover:-translate-y-0.5 sm:inline-block"
           >
             Contact
-          </a>
+          </Link>
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
@@ -73,24 +91,24 @@ export default function Navbar({ start }) {
           >
             <ul className="flex flex-col p-2">
               {LINKS.map((l) => (
-                <li key={l}>
-                  <a
-                    href={`#${l.toLowerCase()}`}
+                <li key={l.label}>
+                  <Link
+                    href={l.href}
                     onClick={() => setOpen(false)}
                     className="block rounded-lg px-4 py-3 text-sm font-medium uppercase tracking-[0.2em] text-silver hover:bg-gunmetal hover:text-platinum"
                   >
-                    {l}
-                  </a>
+                    {l.label}
+                  </Link>
                 </li>
               ))}
               <li className="p-2 sm:hidden">
-                <a
-                  href="#enquiry"
+                <Link
+                  href="/#enquiry"
                   onClick={() => setOpen(false)}
                   className="btn-metal block rounded-md py-3 text-center text-xs font-bold uppercase tracking-[0.2em]"
                 >
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </motion.div>

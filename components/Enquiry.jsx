@@ -14,6 +14,9 @@ import { sendEnquiry } from "@/lib/enquiry";
 const EnquiryContext = createContext(() => {});
 const EXPO = [0.16, 1, 0.3, 1];
 
+// open the enquiry pop-up from anywhere: const open = useEnquiry(); open("Plan name")
+export const useEnquiry = () => useContext(EnquiryContext);
+
 export function EnquiryProvider({ children }) {
   const [plan, setPlan] = useState(null);
   return (

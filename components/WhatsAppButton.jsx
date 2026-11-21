@@ -17,7 +17,7 @@ export default function WhatsAppButton() {
   useMotionValueEvent(scrollY, "change", (y) => setShow(y > 160));
 
   const href = whatsappLink(MESSAGE);
-  const linkProps = href ? { href, target: "_blank", rel: "noopener noreferrer" } : { href: "#enquiry" };
+  const linkProps = href ? { href, target: "_blank", rel: "noopener noreferrer" } : { href: "/#enquiry" };
 
   return (
     <AnimatePresence>
@@ -26,7 +26,7 @@ export default function WhatsAppButton() {
           key="wa"
           {...linkProps}
           aria-label={href ? "Chat with Legion Fitness on WhatsApp" : "Send Legion Fitness an enquiry"}
-          className="group fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-4 z-[80] flex items-center sm:bottom-6 sm:right-6"
+          className="group fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] right-4 z-[80] flex items-center sm:bottom-24 sm:right-6"
           initial={{ scale: 0, opacity: 0, rotate: -90 }}
           animate={{ scale: 1, opacity: 1, rotate: 0 }}
           exit={{ scale: 0, opacity: 0, rotate: 90 }}

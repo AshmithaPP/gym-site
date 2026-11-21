@@ -3,22 +3,46 @@
 import { motion, useTransform } from "framer-motion";
 import Navbar from "./Navbar";
 import PhotoCard from "./PhotoCard";
+import { useEnquiry } from "./Enquiry";
 
 const EXPO = [0.16, 1, 0.3, 1];
 
-// The front card is <TravelCard/>; it sits over the hero slot below and scrolls into the next section.
+// The four training zones from the brief. "Strength Training" is <TravelCard/> — it sits over the
+// hero slot below (top-left) and scrolls on into the next sections. These are the other three.
+// Staggered 2×2 layout; widths/offsets keep every rotated corner on screen at all sizes.
 const CARDS = [
   {
-    src: "/images/hero-deadlift.jpg",
-    alt: "Lifter setting up a heavy deadlift",
-    title: "Power",
-    sub: "lifting",
-    rotate: 16,
-    depth: 44,
-    delay: 0.95,
+    src: "/images/zone-cardio.jpg",
+    alt: "Row of treadmills in the cardio conditioning zone",
+    title: "Cardio",
+    sub: "conditioning",
+    rotate: 6,
+    depth: 34,
+    delay: 0.9,
     float: "float-b",
-    // tilted card behind the front one; sized so its rotated corners stay on screen at every width
-    className: "right-[5%] top-[42%] z-10 w-[44%] sm:right-[8%] sm:w-[38%] lg:right-[4%] lg:top-[40%] lg:w-[42%]",
+    className: "right-[3%] top-[6%] w-[44%] lg:right-[4%] lg:w-[38%]",
+  },
+  {
+    src: "/images/zone-crossfit.jpg",
+    alt: "Battle ropes in the CrossFit and functional training zone",
+    title: "CrossFit",
+    sub: "& functional",
+    rotate: 5,
+    depth: 40,
+    delay: 1.05,
+    float: "float-a",
+    className: "left-[3%] top-[50%] w-[44%] lg:left-[2%] lg:w-[38%]",
+  },
+  {
+    src: "/images/zone-recovery.jpg",
+    alt: "Sauna in the recovery lounge",
+    title: "Recovery",
+    sub: "lounge",
+    rotate: -6,
+    depth: 48,
+    delay: 1.2,
+    float: "float-b",
+    className: "right-[3%] top-[55%] w-[44%] lg:right-[8%] lg:w-[38%]",
   },
 ];
 
@@ -44,21 +68,12 @@ function BounceCard({ card, start, mx, my }) {
           <PhotoCard src={card.src} alt={card.alt} title={card.title} sub={card.sub} />
         </div>
       </motion.div>
-
-      {/* floor shadow that breathes with the float */}
-      <motion.div
-        className="mt-6"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: start ? 1 : 0 }}
-        transition={{ delay: card.delay + 0.4, duration: 0.6 }}
-      >
-        <div className={`mx-auto h-4 w-3/4 rounded-[50%] bg-black/70 blur-md ${card.float}-shadow`} />
-      </motion.div>
     </motion.div>
   );
 }
 
 export default function Hero({ start, pointer, slotRef }) {
+  const openEnquiry = useEnquiry();
   const { rawX, rawY, mx, my } = pointer;
 
   const handleMove = (e) => {
@@ -106,13 +121,12 @@ export default function Hero({ start, pointer, slotRef }) {
         {/* copy */}
         <div className="relative z-30">
           <motion.div
-            className="font-label mb-5 flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.4em] text-steel sm:text-xs"
+            className="font-label mb-5 text-[10px] font-medium uppercase tracking-[0.4em] text-steel sm:text-xs"
             variants={fade}
             custom={0.2}
             initial="hidden"
             animate={state}
           >
-            <span className="h-px w-8 bg-silver/60 sm:w-12" />
             Where warriors are made
           </motion.div>
 
@@ -138,15 +152,16 @@ export default function Hero({ start, pointer, slotRef }) {
           </motion.p>
 
           <motion.div className="mt-8 flex flex-wrap items-center gap-5" variants={fade} custom={0.7} initial="hidden" animate={state}>
-            <a
-              href="#programs"
+            <button
+              type="button"
+              onClick={() => openEnquiry("Join Legion Fitness")}
               className="btn-metal group inline-flex items-center gap-3 rounded-md px-6 py-3.5 text-xs font-bold uppercase tracking-[0.2em] transition-transform hover:-translate-y-0.5"
             >
-              Explore more
+              Join now
               <svg viewBox="0 0 24 24" className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth="2.2">
                 <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </a>
+            </button>
             <a href="#pricing" className="text-xs font-medium uppercase tracking-[0.2em] text-silver underline-offset-8 hover:text-platinum hover:underline">
               View pricing
             </a>
@@ -154,12 +169,9 @@ export default function Hero({ start, pointer, slotRef }) {
         </div>
 
         {/* bouncing gym photos */}
-        <div className="relative mx-auto h-[400px] w-full max-w-[560px] xs:h-[460px] sm:h-[540px] lg:mx-0 lg:h-[min(78vh,660px)] lg:max-w-none">
-          <div
-            ref={slotRef}
-            aria-hidden
-            className="absolute left-[4%] top-[4%] aspect-[4/5] w-[56%] sm:left-[10%] sm:w-[48%] lg:left-[6%] lg:top-[2%] lg:w-[54%]"
-          />
+        <div className="relative mx-auto aspect-[4/5] w-full max-w-[560px] lg:mx-0 lg:aspect-auto lg:h-[min(80vh,680px)] lg:max-w-none">
+          {/* Strength Training — the travelling card lands here first */}
+          <div ref={slotRef} aria-hidden className="absolute left-[3%] top-0 aspect-[4/5] w-[44%] lg:left-[6%] lg:w-[38%]" />
           {CARDS.map((card) => (
             <BounceCard key={card.src} card={card} start={start} mx={mx} my={my} />
           ))}

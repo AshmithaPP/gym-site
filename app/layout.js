@@ -29,7 +29,7 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${cinzel.variable} ${michroma.variable} h-full antialiased`}>
-      <body className="is-loading min-h-full">{children}</body>
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }

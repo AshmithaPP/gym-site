@@ -2,6 +2,7 @@
 
 import { useRef, useSyncExternalStore } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { FOOTER_LINKS, SITE } from "@/lib/site";
 
@@ -38,8 +39,18 @@ export default function Footer() {
   const contentY = useTransform(progress, [0, 1], ["-18%", "0%"]);
 
   const contact = [
-    SITE.address && { label: "Visit", value: SITE.address },
+    (SITE.address || SITE.mapUrl) && {
+      label: "Visit",
+      value: SITE.address && !SITE.address.startsWith("http") ? SITE.address : "Google Maps",
+      href: SITE.mapUrl || (SITE.address && SITE.address.startsWith("http") ? SITE.address : undefined),
+    },
     SITE.phone && { label: "Call", value: SITE.phone, href: `tel:${SITE.phone.replace(/\s/g, "")}` },
+    SITE.phone2 && { label: "Call", value: SITE.phone2, href: `tel:${SITE.phone2.replace(/\s/g, "")}` },
+    SITE.whatsapp && {
+      label: "WhatsApp",
+      value: SITE.whatsapp,
+      href: `https://wa.me/${(SITE.whatsapp || "").replace(/\D/g, "").replace(/^(\d{10})$/, "91$1")}`,
+    },
     SITE.email && { label: "Email", value: SITE.email, href: `mailto:${SITE.email}` },
     SITE.hours && { label: "Hours", value: SITE.hours },
   ].filter(Boolean);
@@ -58,7 +69,7 @@ export default function Footer() {
       {/* soft top glow */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(ellipse_60%_100%_at_50%_0%,rgba(228,228,231,0.08),transparent_70%)]" />
 
-      <motion.div style={{ y: contentY }} className="relative mx-auto max-w-7xl px-4 pb-28 pt-20 sm:pb-24 sm:px-6 sm:pt-24 lg:px-10 lg:pt-28">
+      <motion.div style={{ y: contentY }} className="relative mx-auto max-w-7xl px-4 pb-44 pt-20 sm:px-6 sm:pt-24 lg:px-10 lg:pt-28">
         {/* CTA */}
         <motion.div {...inView} className="grid items-end gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
           <div>
@@ -76,15 +87,15 @@ export default function Footer() {
               first rep.
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-4">
-              <a
-                href="#pricing"
+              <Link
+                href="/#pricing"
                 className="btn-metal inline-flex items-center gap-3 rounded-md px-6 py-3.5 text-xs font-bold uppercase tracking-[0.2em] transition-transform hover:-translate-y-0.5"
               >
                 Join now
                 <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2">
                   <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-              </a>
+              </Link>
               {SITE.phone && (
                 <a
                   href={`tel:${SITE.phone.replace(/\s/g, "")}`}
@@ -142,10 +153,10 @@ export default function Footer() {
               <ul className="mt-5 space-y-3">
                 {col.links.map((l) => (
                   <li key={l.label}>
-                    <a href={l.href} className="group inline-flex items-center gap-2 text-sm text-steel transition-colors hover:text-platinum">
+                    <Link href={l.href} className="group inline-flex items-center gap-2 text-sm text-steel transition-colors hover:text-platinum">
                       <span className="h-px w-0 bg-platinum transition-all duration-300 group-hover:w-3" />
                       {l.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -157,10 +168,15 @@ export default function Footer() {
               <p className="font-label text-[11px] font-bold uppercase tracking-[0.3em] text-silver">Contact</p>
               <ul className="mt-5 space-y-3">
                 {contact.map((c) => (
-                  <li key={c.label} className="text-sm">
+                  <li key={c.label + c.value} className="text-sm">
                     <span className="mr-2 text-[10px] uppercase tracking-[0.2em] text-graphite">{c.label}</span>
                     {c.href ? (
-                      <a href={c.href} className="text-steel transition-colors hover:text-platinum">
+                      <a
+                        href={c.href}
+                        target={c.href.startsWith("http") ? "_blank" : undefined}
+                        rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                        className="text-steel transition-colors hover:text-platinum"
+                      >
                         {c.value}
                       </a>
                     ) : (

@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   animate,
   motion,
-  useInView,
   useMotionValue,
   useTransform,
 } from "framer-motion";
 import {
   CHAPTERS,
   GENERAL_NOTES,
+  INTRO_PRICING_NOTE,
+  SESSION_UPGRADE_NOTE,
   INAUGURATION_OFFER,
   MEMBERSHIPS,
   PT_INCLUDES,
@@ -19,7 +20,7 @@ import {
   STORY_IMAGES,
   TRANSFORMATIONS,
 } from "@/lib/pricing";
-import { EnquireButton, EnquiryProvider } from "./Enquiry";
+import { EnquireButton } from "./Enquiry";
 
 const EXPO = [0.16, 1, 0.3, 1];
 const fmt = (n) => n.toLocaleString("en-IN");
@@ -27,20 +28,20 @@ const fmt = (n) => n.toLocaleString("en-IN");
 /* ---------- small pieces ---------- */
 
 // Price that counts up when it scrolls into view, and re-animates when the value changes.
+// Shows the real price from the first render (no "₹0" flash while the page loads), and
+// rolls smoothly to the new figure when the value changes (e.g. the PT session picker).
 function CountUp({ value, className = "" }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, amount: 0.6 });
-  const mv = useMotionValue(0);
+  const mv = useMotionValue(value);
   const text = useTransform(mv, (v) => fmt(Math.round(v)));
 
   useEffect(() => {
-    if (!inView) return;
-    const controls = animate(mv, value, { duration: 1.1, ease: EXPO });
+    if (mv.get() === value) return;
+    const controls = animate(mv, value, { duration: 0.8, ease: EXPO });
     return () => controls.stop();
-  }, [inView, value, mv]);
+  }, [value, mv]);
 
   return (
-    <span ref={ref} className={className}>
+    <span className={className}>
       ₹<motion.span>{text}</motion.span>
     </span>
   );
@@ -172,15 +173,21 @@ function ChapterJoin() {
               {m.name}
             </p>
             <p className="mt-0.5 text-[11px] text-steel">{m.term}</p>
-            <div className="mt-4 flex items-baseline gap-2">
+            <p className="mt-4 text-[10px] uppercase tracking-[0.2em] text-steel">
+              Introductory price
+            </p>
+            <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
               <CountUp
                 value={m.promo}
                 className="font-display text-metal text-3xl"
               />
-              <span className="text-xs text-steel line-through">
+              <span className="text-sm text-steel line-through decoration-silver/70 decoration-2">
                 ₹{fmt(m.standard)}
               </span>
             </div>
+            <span className="mt-2 self-start rounded-full bg-carbon/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-chrome">
+              Save ₹{fmt(m.standard - m.promo)}
+            </span>
             <EnquireButton
               plan={`${m.name} membership`}
               variant={m.best ? "solid" : "ghost"}
@@ -189,6 +196,10 @@ function ChapterJoin() {
           </motion.div>
         ))}
       </motion.div>
+
+      <p className="mt-4 text-[11px] leading-relaxed text-steel">
+        {INTRO_PRICING_NOTE}
+      </p>
 
       <motion.div
         className="relative mt-5 overflow-hidden rounded-2xl border border-silver/40 bg-gradient-to-br from-gunmetal to-onyx p-5 sm:p-6"
@@ -207,6 +218,7 @@ function ChapterJoin() {
             value={INAUGURATION_OFFER.price}
             className="font-display text-metal text-5xl"
           />
+          <span className="text-xs text-steel">+ GST</span>
         </div>
         <p className="mt-2 text-xs leading-relaxed text-steel">
           {INAUGURATION_OFFER.note}
@@ -227,9 +239,9 @@ function ChapterCoach() {
   return (
     <>
       <p className="mb-8 max-w-lg text-sm leading-relaxed text-steel sm:text-base">
-        Then you meet your coach. Every PT client gets a dedicated trainer, a
-        programme and diet plan built around their goals, and someone watching
-        their form on every rep.
+        Then you meet your coach. Every PT client gets one dedicated trainer who
+        teaches what to do, how to do it, what to eat and when to eat — guided
+        skill-building for steady, sustainable progress.
       </p>
 
       <motion.div
@@ -305,7 +317,7 @@ function ChapterCoach() {
         </motion.ul>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
           <p className="text-[11px] text-steel">
-            Gym membership is charged separately.
+            Gym membership is charged separately. PT fees are fixed.
           </p>
           <EnquireButton
             plan={`Personal training — ${pkg.sessions} sessions / month`}
@@ -321,9 +333,10 @@ function ChapterTransform() {
   return (
     <>
       <p className="mb-8 max-w-lg text-sm leading-relaxed text-steel sm:text-base">
-        For the ones who want a before and an after. Structured, goal-driven
-        coaching with daily accountability — for fat loss, muscle gain, a
-        physique goal or a big occasion.
+        For the ones who want a before and an after. Everything in PT, turned
+        into a deadline-bound coaching partnership for fat loss, muscle gain,
+        physique development or a big occasion — starting with a Day-1 kickoff
+        that maps where you start and how you&apos;ll get there.
       </p>
 
       <motion.div {...inViewProps} className="grid gap-4 md:grid-cols-2">
@@ -385,6 +398,10 @@ function ChapterTransform() {
         ))}
       </motion.div>
 
+      <p className="mt-5 text-xs leading-relaxed text-steel">
+        {SESSION_UPGRADE_NOTE}
+      </p>
+
       <motion.div
         className="mt-5 rounded-2xl border border-dashed border-graphite p-5 text-xs leading-relaxed text-steel"
         initial={{ opacity: 0 }}
@@ -395,11 +412,13 @@ function ChapterTransform() {
         <span className="font-bold uppercase tracking-[0.2em] text-silver">
           Conditional Results Assurance — T&amp;C apply.{" "}
         </span>
-        If you fully follow the programme and don&apos;t see measurable progress
-        on your agreed goals, we may offer a conditional refund or extra
-        coaching at no added coaching fee, after review. Eligibility and
-        remedies are set out in a signed agreement; no guaranteed physical
-        outcome is implied. Gym membership not included.
+        If you comply 100% with the programme — attendance, daily weighed meal
+        logs and weekly check-ins — and don&apos;t show measurable improvement
+        on your agreed goals, we may offer a conditional refund or an extra
+        coaching period at no added coaching fee, after review. Exact terms are
+        set out in a signed agreement before enrolment; no guaranteed outcome is
+        implied. No photos or videos are ever published without your explicit
+        written consent. Gym membership not included.
       </motion.div>
     </>
   );
@@ -460,89 +479,87 @@ const CHAPTER_BODIES = [
 
 export default function Pricing({ slotRef, storyRef, onChapter }) {
   return (
-    <EnquiryProvider>
-      <section
-        id="pricing"
-        className="bg-steel-wall grain relative overflow-hidden pb-20 pt-24 sm:pb-28 sm:pt-32"
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-x-16 lg:gap-y-20">
-            {/* intro */}
-            <motion.div
-              {...inViewProps}
-              className="mx-auto max-w-3xl text-center lg:col-start-2 lg:row-start-1 lg:mx-0 lg:text-left"
+    <section
+      id="pricing"
+      className="bg-steel-wall grain relative overflow-hidden pb-20 pt-24 sm:pb-28 sm:pt-32"
+    >
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-x-16 lg:gap-y-20">
+          {/* intro */}
+          <motion.div
+            {...inViewProps}
+            className="mx-auto max-w-3xl text-center lg:col-start-2 lg:row-start-1 lg:mx-0 lg:text-left"
+          >
+            <motion.p
+              variants={rise}
+              className="font-label text-[10px] font-medium uppercase tracking-[0.4em] text-steel sm:text-xs"
             >
-              <motion.p
-                variants={rise}
-                className="font-label text-[10px] font-medium uppercase tracking-[0.4em] text-steel sm:text-xs"
-              >
-                Pricing & programmes
-              </motion.p>
-              <motion.h2
-                variants={rise}
-                custom={1}
-                className="font-display text-metal mt-4 text-[clamp(2.2rem,8vw,4.25rem)] uppercase"
-              >
-                Every warrior has a story
-              </motion.h2>
-              <motion.p
-                variants={rise}
-                custom={2}
-                className="mx-auto mt-5 max-w-xl text-sm lg:mx-0 leading-relaxed text-steel sm:text-base"
-              >
-                Four chapters, from your first day on the floor to stepping on
-                stage. Scroll through and find where yours begins.
-              </motion.p>
-            </motion.div>
+              Pricing & programmes
+            </motion.p>
+            <motion.h2
+              variants={rise}
+              custom={1}
+              className="font-display text-metal mt-4 text-[clamp(2.2rem,8vw,4.25rem)] uppercase"
+            >
+              Every warrior has a story
+            </motion.h2>
+            <motion.p
+              variants={rise}
+              custom={2}
+              className="mx-auto mt-5 max-w-xl text-sm lg:mx-0 leading-relaxed text-steel sm:text-base"
+            >
+              Four chapters, from your first day on the floor to stepping on
+              stage. Scroll through and find where yours begins.
+            </motion.p>
+          </motion.div>
 
-            {/* left: the travelling card lands here, then stays pinned on desktop */}
-            <div className="lg:col-start-1 lg:row-span-2 lg:row-start-1">
-              <div
-                ref={slotRef}
-                aria-hidden
-                className="mx-auto aspect-[4/5] w-[52vw] max-w-[300px] lg:w-full lg:max-w-[400px]"
-              />
-            </div>
-
-            {/* right: the chapters */}
-            <div ref={storyRef} className="lg:col-start-2 lg:row-start-2">
-              {CHAPTER_BODIES.map((Body, i) => (
-                <motion.section
-                  key={CHAPTERS[i].id}
-                  aria-labelledby={`chapter-${i}`}
-                  className="flex min-h-0 flex-col justify-center border-t border-gunmetal py-14 first:border-t-0 first:pt-0 lg:min-h-[90vh] lg:py-20"
-                  viewport={{ margin: "-45% 0px -45% 0px" }}
-                  onViewportEnter={() => onChapter?.(i)}
-                >
-                  {i > 0 && <MobileStoryImage index={i} />}
-                  <div id={`chapter-${i}`}>
-                    <ChapterHead index={i} />
-                  </div>
-                  <Body />
-                </motion.section>
-              ))}
-            </div>
+          {/* left: the travelling card lands here, then stays pinned on desktop */}
+          <div className="lg:col-start-1 lg:row-span-2 lg:row-start-1">
+            <div
+              ref={slotRef}
+              aria-hidden
+              className="mx-auto aspect-[4/5] w-[52vw] max-w-[300px] lg:w-full lg:max-w-[400px]"
+            />
           </div>
 
-          {/* fine print */}
-          <motion.ul
-            {...inViewProps}
-            className="mx-auto mt-16 grid max-w-4xl gap-3 border-t border-gunmetal pt-8 sm:grid-cols-2"
-          >
-            {GENERAL_NOTES.map((n, i) => (
-              <motion.li
-                key={n}
-                variants={rise}
-                custom={i}
-                className="flex gap-2.5 text-xs leading-relaxed text-steel"
+          {/* right: the chapters */}
+          <div ref={storyRef} className="lg:col-start-2 lg:row-start-2">
+            {CHAPTER_BODIES.map((Body, i) => (
+              <motion.section
+                key={CHAPTERS[i].id}
+                aria-labelledby={`chapter-${i}`}
+                className="flex min-h-0 flex-col justify-center border-t border-gunmetal py-14 first:border-t-0 first:pt-0 lg:min-h-[90vh] lg:py-20"
+                viewport={{ margin: "-45% 0px -45% 0px" }}
+                onViewportEnter={() => onChapter?.(i)}
               >
-                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-silver/60" />
-                {n}
-              </motion.li>
+                {i > 0 && <MobileStoryImage index={i} />}
+                <div id={`chapter-${i}`}>
+                  <ChapterHead index={i} />
+                </div>
+                <Body />
+              </motion.section>
             ))}
-          </motion.ul>
+          </div>
         </div>
-      </section>
-    </EnquiryProvider>
+
+        {/* fine print */}
+        <motion.ul
+          {...inViewProps}
+          className="mx-auto mt-16 grid max-w-4xl gap-3 border-t border-gunmetal pt-8 sm:grid-cols-2"
+        >
+          {GENERAL_NOTES.map((n, i) => (
+            <motion.li
+              key={n}
+              variants={rise}
+              custom={i}
+              className="flex gap-2.5 text-xs leading-relaxed text-steel"
+            >
+              <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-silver/60" />
+              {n}
+            </motion.li>
+          ))}
+        </motion.ul>
+      </div>
+    </section>
   );
 }

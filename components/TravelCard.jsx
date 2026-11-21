@@ -176,6 +176,7 @@ export default function TravelCard({ start, stageRef, slots, storyRef, chapter, 
   );
 
   const heroLabel = useTransform(p1, [0, 0.3], [1, 0]);
+  const floorShadow = useTransform(p1, [0.15, 0.5], [0, 1]);
   const storyLabel = useTransform([p2, p3], ([t2, t3]) => clamp01((t2 - 0.7) / 0.3) * (1 - clamp01(t3 / 0.3)));
   const whyLabel = useTransform(p3, [0.7, 1], [0, 1]);
 
@@ -201,7 +202,7 @@ export default function TravelCard({ start, stageRef, slots, storyRef, chapter, 
           whileHover={{ scale: 1.04, transition: { type: "spring", stiffness: 300, damping: 10 } }}
         >
           <div className="float-a">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[22px] border border-silver/25 bg-onyx shadow-[0_30px_60px_-15px_rgba(0,0,0,0.85)] sm:rounded-[28px]">
+            <div className="@container relative aspect-[4/5] overflow-hidden rounded-[22px] border border-silver/25 bg-onyx shadow-[0_30px_60px_-15px_rgba(0,0,0,0.85)] sm:rounded-[28px]">
               {/* photo: wipes up to the next one when the story moves on */}
               <AnimatePresence initial={false}>
                 <motion.div
@@ -220,10 +221,10 @@ export default function TravelCard({ start, stageRef, slots, storyRef, chapter, 
               {/* hero label */}
               <motion.div
                 style={{ opacity: heroLabel }}
-                className="absolute inset-x-0 bottom-0 z-[3] bg-gradient-to-t from-carbon via-carbon/70 to-transparent px-4 pb-4 pt-14 sm:px-6 sm:pb-6"
+                className="absolute inset-x-0 bottom-0 z-[3] bg-gradient-to-t from-carbon via-carbon/70 to-transparent px-[7cqw] pb-[7cqw] pt-[22cqw]"
               >
-                <p className="font-display text-metal text-2xl uppercase leading-tight sm:text-3xl lg:text-2xl xl:text-4xl">Strength</p>
-                <p className="font-label mt-1 text-[10px] uppercase tracking-[0.4em] text-silver sm:text-xs">training</p>
+                <p className="font-display text-metal text-[11cqw] uppercase leading-[1.05]">Strength</p>
+                <p className="font-label mt-1 text-[max(8px,5cqw)] uppercase tracking-[0.3em] text-silver">training</p>
               </motion.div>
 
               {/* pricing-story label: chapter progress + current chapter */}
@@ -241,7 +242,7 @@ export default function TravelCard({ start, stageRef, slots, storyRef, chapter, 
                     ))}
                   </div>
                 )}
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-carbon via-carbon/70 to-transparent px-4 pb-4 pt-14 sm:px-6 sm:pb-6">
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-carbon via-carbon/70 to-transparent px-[7cqw] pb-[7cqw] pt-[22cqw]">
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.div
                       key={ch.id}
@@ -250,10 +251,10 @@ export default function TravelCard({ start, stageRef, slots, storyRef, chapter, 
                       exit={{ y: -16, opacity: 0 }}
                       transition={{ duration: 0.45, ease: EXPO }}
                     >
-                      <p className="font-label text-[10px] uppercase tracking-[0.4em] text-silver sm:text-xs">
+                      <p className="font-label text-[max(8px,5cqw)] uppercase tracking-[0.3em] text-silver">
                         Chapter {String(storyIndex + 1).padStart(2, "0")}
                       </p>
-                      <p className="font-display text-metal mt-1 text-2xl uppercase leading-tight sm:text-3xl lg:text-2xl xl:text-4xl">{ch.step}</p>
+                      <p className="font-display text-metal mt-1 text-[11cqw] uppercase leading-[1.05]">{ch.step}</p>
                     </motion.div>
                   </AnimatePresence>
                 </div>
@@ -262,23 +263,18 @@ export default function TravelCard({ start, stageRef, slots, storyRef, chapter, 
               {/* "Why Legion" label */}
               <motion.div
                 style={{ opacity: whyLabel }}
-                className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] bg-gradient-to-t from-carbon via-carbon/70 to-transparent px-4 pb-4 pt-14 sm:px-6 sm:pb-6"
+                className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] bg-gradient-to-t from-carbon via-carbon/70 to-transparent px-[7cqw] pb-[7cqw] pt-[22cqw]"
               >
-                <p className="font-label text-[10px] uppercase tracking-[0.4em] text-silver sm:text-xs">Why Legion</p>
-                <p className="font-display text-metal mt-1 text-2xl uppercase leading-tight sm:text-3xl lg:text-2xl xl:text-4xl">Built different</p>
+                <p className="font-label text-[max(8px,5cqw)] uppercase tracking-[0.3em] text-silver">Why Legion</p>
+                <p className="font-display text-metal mt-1 text-[11cqw] uppercase leading-[1.05]">Built different</p>
               </motion.div>
             </div>
           </div>
         </motion.div>
       </motion.div>
 
-      {/* floor shadow */}
-      <motion.div
-        className="mt-6"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: start ? 1 : 0 }}
-        transition={{ delay: 1.15, duration: 0.6 }}
-      >
+      {/* floor shadow — hidden in the hero grid (it would fall on the card below), shown once travelling */}
+      <motion.div className="mt-6" style={{ opacity: floorShadow }}>
         <div className="float-a-shadow mx-auto h-4 w-3/4 rounded-[50%] bg-black/70 blur-md" />
       </motion.div>
     </motion.div>
