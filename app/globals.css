@@ -119,6 +119,15 @@ body.is-loading {
   font-weight: 400;
 }
 
+button,
+[role="button"],
+.btn-metal,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  cursor: pointer;
+}
+
 .btn-metal {
   background: linear-gradient(180deg, #f4f4f5 0%, #c9c9cd 55%, #a9a9ae 100%);
   color: var(--carbon);

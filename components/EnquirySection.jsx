@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { sendEnquiry } from "@/lib/enquiry";
+import { submitEnquiry } from "@/lib/enquiry";
 
 const EXPO = [0.16, 1, 0.3, 1];
 
@@ -42,17 +42,28 @@ function Label({ children, htmlFor }) {
 
 export default function EnquirySection() {
   const [session, setSession] = useState(SESSIONS[0]);
-  const [status, setStatus] = useState("idle"); // idle | sent | not-connected
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
+    setStatus("sending");
+    setErrorMessage("");
     const f = new FormData(e.currentTarget);
-    const sent = sendEnquiry({
-      subject: `Enquiry: ${f.get("need")}`,
-      lines: [`Name: ${f.get("name")}`, `Phone: ${f.get("phone")}`, `Training need: ${f.get("need")}`, `Preferred session: ${session}`],
+    const res = await submitEnquiry({
+      name: f.get("name"),
+      email: f.get("email"),
+      phone: f.get("phone"),
+      need: f.get("need"),
+      session,
     });
-    setStatus(sent ? "sent" : "not-connected");
-    if (sent) e.currentTarget.reset();
+    if (res.success) {
+      setStatus("sent");
+      e.currentTarget?.reset();
+    } else {
+      setStatus("error");
+      setErrorMessage(res.error || "Failed to send enquiry. Please try again.");
+    }
   };
 
   return (
@@ -115,8 +126,8 @@ export default function EnquirySection() {
                     />
                   </svg>
                 </span>
-                <p className="font-display text-metal mt-6 text-3xl uppercase">Almost there</p>
-                <p className="mt-3 max-w-xs text-sm text-steel">Send the message that just opened and our team will get back to you.</p>
+                <p className="font-display text-metal mt-6 text-3xl uppercase">Enquiry Received</p>
+                <p className="mt-3 max-w-xs text-sm text-steel">Thank you! We have received your enquiry and sent a confirmation email to your inbox.</p>
                 <button
                   type="button"
                   onClick={() => setStatus("idle")}
@@ -133,6 +144,19 @@ export default function EnquirySection() {
                 </motion.div>
 
                 <motion.div variants={rise} custom={1}>
+                  <Label htmlFor="enq-email">Email</Label>
+                  <input
+                    id="enq-email"
+                    name="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    placeholder="yourname@gmail.com"
+                    className={field}
+                  />
+                </motion.div>
+
+                <motion.div variants={rise} custom={1.5}>
                   <Label htmlFor="enq-phone">Number</Label>
                   <input
                     id="enq-phone"
@@ -200,9 +224,9 @@ export default function EnquirySection() {
                   </div>
                 </motion.fieldset>
 
-                {status === "not-connected" && (
-                  <p role="alert" className="rounded-lg border border-dashed border-graphite p-3 text-xs leading-relaxed text-steel">
-                    Online enquiries aren&apos;t connected yet. Please visit or call the front desk for now.
+                {status === "error" && (
+                  <p role="alert" className="rounded-lg border border-dashed border-red-500/50 bg-red-950/20 p-3 text-xs leading-relaxed text-red-300">
+                    {errorMessage || "Failed to submit enquiry. Please try again."}
                   </p>
                 )}
 
@@ -210,12 +234,13 @@ export default function EnquirySection() {
                   variants={rise}
                   custom={4}
                   type="submit"
+                  disabled={status === "sending"}
                   whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.97 }}
-                  className="btn-metal group relative mt-1 inline-flex items-center justify-center gap-3 overflow-hidden rounded-xl py-4 text-xs font-bold uppercase tracking-[0.25em]"
+                  className="btn-metal group relative mt-1 inline-flex items-center justify-center gap-3 overflow-hidden rounded-xl py-4 text-xs font-bold uppercase tracking-[0.25em] disabled:opacity-60"
                 >
                   <span className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/4 skew-x-[-20deg] bg-white/50 opacity-0 transition-all duration-700 group-hover:left-[110%] group-hover:opacity-100" />
-                  Send enquiry
+                  {status === "sending" ? "Sending..." : "Send enquiry"}
                   <svg viewBox="0 0 24 24" className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth="2.2">
                     <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>

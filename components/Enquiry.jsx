@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { sendEnquiry } from "@/lib/enquiry";
+import { submitEnquiry } from "@/lib/enquiry";
 
 /*
   Enquiry flow for the pricing cards.
@@ -75,7 +75,8 @@ export function EnquireButton({
 
 function EnquiryModal({ plan, onClose }) {
   const firstField = useRef(null);
-  const [notConnected, setNotConnected] = useState(false);
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     firstField.current?.focus();
@@ -89,19 +90,24 @@ function EnquiryModal({ plan, onClose }) {
     };
   }, [onClose]);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
+    setStatus("sending");
+    setErrorMessage("");
     const f = new FormData(e.currentTarget);
-    const sent = sendEnquiry({
-      subject: `Enquiry: ${f.get("plan")}`,
-      lines: [
-        `Name: ${f.get("name")}`,
-        `Phone: ${f.get("phone")}`,
-        f.get("message") ? `Message: ${f.get("message")}` : null,
-      ],
+    const res = await submitEnquiry({
+      plan,
+      name: f.get("name"),
+      email: f.get("email"),
+      phone: f.get("phone"),
+      message: f.get("message"),
     });
-    if (sent) onClose();
-    else setNotConnected(true);
+    if (res.success) {
+      setStatus("sent");
+    } else {
+      setStatus("error");
+      setErrorMessage(res.error || "Failed to send enquiry. Please try again.");
+    }
   };
 
   const field =
@@ -159,64 +165,98 @@ function EnquiryModal({ plan, onClose }) {
           Leave your details and our team will get back to you.
         </p>
 
-        <form onSubmit={submit} className="mt-6 grid gap-4">
-          <input type="hidden" name="plan" value={plan} />
-          <label className="grid gap-1.5">
-            <span className="font-label text-[10px] uppercase text-silver">
-              Name
+        {status === "sent" ? (
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <span className="btn-metal flex h-16 w-16 items-center justify-center rounded-full">
+              <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2.4">
+                <path d="M5 12.5l4.5 4.5L19 7.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </span>
-            <input
-              ref={firstField}
-              name="name"
-              required
-              autoComplete="name"
-              className={field}
-              placeholder="Your name"
-            />
-          </label>
-          <label className="grid gap-1.5">
-            <span className="font-label text-[10px] uppercase text-silver">
-              Phone
-            </span>
-            <input
-              name="phone"
-              type="tel"
-              required
-              autoComplete="tel"
-              inputMode="tel"
-              className={field}
-              placeholder="Your phone number"
-            />
-          </label>
-          <label className="grid gap-1.5">
-            <span className="font-label text-[10px] uppercase text-silver">
-              Message (optional)
-            </span>
-            <textarea
-              name="message"
-              rows={3}
-              className={`${field} resize-none`}
-              placeholder="Goals, preferred timings, questions…"
-            />
-          </label>
-
-          {notConnected && (
-            <p
-              role="alert"
-              className="rounded-lg border border-dashed border-graphite p-3 text-xs leading-relaxed text-steel"
-            >
-              Online enquiries aren&apos;t connected yet. Please visit or call
-              the front desk for now.
+            <h4 className="font-display text-metal mt-6 text-2xl uppercase">Enquiry Received</h4>
+            <p className="mt-3 max-w-xs text-sm text-steel">
+              Thank you! We have received your enquiry and sent a confirmation email to your inbox.
             </p>
-          )}
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn-metal mt-6 rounded-md px-6 py-2.5 text-xs font-bold uppercase tracking-[0.2em]"
+            >
+              Close
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={submit} className="mt-6 grid gap-4">
+            <input type="hidden" name="plan" value={plan} />
+            <label className="grid gap-1.5">
+              <span className="font-label text-[10px] uppercase text-silver">
+                Name
+              </span>
+              <input
+                ref={firstField}
+                name="name"
+                required
+                autoComplete="name"
+                className={field}
+                placeholder="Your name"
+              />
+            </label>
+            <label className="grid gap-1.5">
+              <span className="font-label text-[10px] uppercase text-silver">
+                Email
+              </span>
+              <input
+                name="email"
+                type="email"
+                required
+                autoComplete="email"
+                className={field}
+                placeholder="Your email address"
+              />
+            </label>
+            <label className="grid gap-1.5">
+              <span className="font-label text-[10px] uppercase text-silver">
+                Phone
+              </span>
+              <input
+                name="phone"
+                type="tel"
+                required
+                autoComplete="tel"
+                inputMode="tel"
+                className={field}
+                placeholder="Your phone number"
+              />
+            </label>
+            <label className="grid gap-1.5">
+              <span className="font-label text-[10px] uppercase text-silver">
+                Message (optional)
+              </span>
+              <textarea
+                name="message"
+                rows={3}
+                className={`${field} resize-none`}
+                placeholder="Goals, preferred timings, questions…"
+              />
+            </label>
 
-          <button
-            type="submit"
-            className="btn-metal mt-2 rounded-md py-3.5 text-xs font-bold uppercase tracking-[0.2em] transition-transform hover:-translate-y-0.5"
-          >
-            Send enquiry
-          </button>
-        </form>
+            {status === "error" && (
+              <p
+                role="alert"
+                className="rounded-lg border border-dashed border-red-500/50 bg-red-950/20 p-3 text-xs leading-relaxed text-red-300"
+              >
+                {errorMessage || "Failed to send enquiry. Please try again."}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={status === "sending"}
+              className="btn-metal mt-2 rounded-md py-3.5 text-xs font-bold uppercase tracking-[0.2em] transition-transform hover:-translate-y-0.5 disabled:opacity-60"
+            >
+              {status === "sending" ? "Sending..." : "Send enquiry"}
+            </button>
+          </form>
+        )}
       </motion.div>
     </motion.div>
   );

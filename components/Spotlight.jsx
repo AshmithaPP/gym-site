@@ -1,11 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEnquiry } from "./Enquiry";
 
 const WORD = "STRENGTH";
 const EXPO = [0.16, 1, 0.3, 1];
 
 function SpotlightCopy({ className, view }) {
+  const openEnquiry = useEnquiry();
   return (
     <motion.div
       className={`flex-col ${className}`}
@@ -18,12 +20,13 @@ function SpotlightCopy({ className, view }) {
         Progressive strength programs built around the big lifts, coached by
         people who actually lift.
       </p>
-      <a
-        href="#pricing"
+      <button
+        type="button"
+        onClick={() => openEnquiry("Strength Training Program")}
         className="btn-metal mt-6 inline-flex items-center gap-3 rounded-md px-7 py-3.5 text-xs font-bold uppercase tracking-[0.2em] transition-transform hover:-translate-y-0.5"
       >
         Join now
-      </a>
+      </button>
     </motion.div>
   );
 }

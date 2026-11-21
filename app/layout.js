@@ -1,5 +1,6 @@
 import { Cinzel, Michroma } from "next/font/google";
 import "./globals.css";
+import { EnquiryProvider } from "@/components/Enquiry";
 
 // Closest free match to the logo's carved, flared lettering — used across the whole page.
 const cinzel = Cinzel({
@@ -29,7 +30,9 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${cinzel.variable} ${michroma.variable} h-full antialiased`}>
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        <EnquiryProvider>{children}</EnquiryProvider>
+      </body>
     </html>
   );
 }

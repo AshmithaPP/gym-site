@@ -12,7 +12,6 @@ import EnquirySection from "./EnquirySection";
 import Testimonials from "./Testimonials";
 import WhatsAppButton from "./WhatsAppButton";
 import OfferBar from "./OfferBar";
-import { EnquiryProvider } from "./Enquiry";
 
 export default function Experience() {
   const [chapter, setChapter] = useState(0);
@@ -32,7 +31,7 @@ export default function Experience() {
   const pointer = { rawX, rawY, mx, my };
 
   return (
-    <EnquiryProvider>
+    <>
       <main ref={stageRef} className="relative overflow-clip">
         <Hero start={true} pointer={pointer} slotRef={heroSlotRef} />
         <Spotlight slotRef={spotSlotRef} />
@@ -52,6 +51,6 @@ export default function Experience() {
       <Footer />
       <WhatsAppButton />
       <OfferBar />
-    </EnquiryProvider>
+    </>
   );
 }

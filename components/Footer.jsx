@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { FOOTER_LINKS, SITE } from "@/lib/site";
+import { useEnquiry } from "./Enquiry";
 
 const EXPO = [0.16, 1, 0.3, 1];
 
@@ -32,6 +33,7 @@ const SOCIAL_ICONS = {
 };
 
 export default function Footer() {
+  const openEnquiry = useEnquiry();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
   const progress = useSpring(scrollYProgress, { stiffness: 110, damping: 18, mass: 0.5 });
@@ -69,7 +71,7 @@ export default function Footer() {
       {/* soft top glow */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(ellipse_60%_100%_at_50%_0%,rgba(228,228,231,0.08),transparent_70%)]" />
 
-      <motion.div style={{ y: contentY }} className="relative mx-auto max-w-7xl px-4 pb-44 pt-20 sm:px-6 sm:pt-24 lg:px-10 lg:pt-28">
+      <motion.div style={{ y: contentY }} className="relative mx-auto max-w-7xl px-4 pb-12 pt-20 sm:px-6 sm:pb-16 sm:pt-24 lg:px-10 lg:pt-28">
         {/* CTA */}
         <motion.div {...inView} className="grid items-end gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
           <div>
@@ -87,15 +89,16 @@ export default function Footer() {
               first rep.
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-4">
-              <Link
-                href="/#pricing"
+              <button
+                type="button"
+                onClick={() => openEnquiry("Join Legion Fitness")}
                 className="btn-metal inline-flex items-center gap-3 rounded-md px-6 py-3.5 text-xs font-bold uppercase tracking-[0.2em] transition-transform hover:-translate-y-0.5"
               >
                 Join now
                 <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2">
                   <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-              </Link>
+              </button>
               {SITE.phone && (
                 <a
                   href={`tel:${SITE.phone.replace(/\s/g, "")}`}
@@ -119,7 +122,7 @@ export default function Footer() {
         {/* columns */}
         <motion.div
           {...inView}
-          className={`grid grid-cols-2 gap-x-6 gap-y-10 ${contact.length ? "lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]" : "lg:grid-cols-[1.6fr_1fr_1fr]"}`}
+          className={`grid grid-cols-2 gap-x-6 gap-y-10 ${contact.length ? "lg:grid-cols-[1.2fr_0.8fr_1.1fr_1.5fr]" : "lg:grid-cols-[1.6fr_1fr_1fr]"}`}
         >
           <motion.div variants={rise} className="col-span-2 lg:col-span-1">
             <Image src="/images/legion-logo.png" alt="Legion Fitness" width={1198} height={210} className="h-9 w-auto sm:h-10" />
@@ -167,30 +170,42 @@ export default function Footer() {
             <motion.div variants={rise} custom={3} className="col-span-2 lg:col-span-1">
               <p className="font-label text-[11px] font-bold uppercase tracking-[0.3em] text-silver">Contact</p>
               <ul className="mt-5 space-y-3">
-                {contact.map((c) => (
-                  <li key={c.label + c.value} className="text-sm">
-                    <span className="mr-2 text-[10px] uppercase tracking-[0.2em] text-graphite">{c.label}</span>
-                    {c.href ? (
-                      <a
-                        href={c.href}
-                        target={c.href.startsWith("http") ? "_blank" : undefined}
-                        rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                        className="text-steel transition-colors hover:text-platinum"
-                      >
-                        {c.value}
-                      </a>
-                    ) : (
-                      <span className="text-steel">{c.value}</span>
-                    )}
-                  </li>
-                ))}
+                {contact.map((c) => {
+                  const isEmail = c.label === "Email";
+                  const isVisit = c.label === "Visit";
+                  return (
+                    <li key={c.label + c.value} className="text-sm">
+                      <span className="mr-2 text-[10px] uppercase tracking-[0.2em] text-graphite">{c.label}</span>
+                      {c.href ? (
+                        <a
+                          href={c.href}
+                          target={c.href.startsWith("http") ? "_blank" : undefined}
+                          rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                          className={`text-steel transition-colors hover:text-platinum ${
+                            isEmail
+                              ? "lowercase [font-family:system-ui,-apple-system,sans-serif]"
+                              : isVisit
+                              ? "inline leading-relaxed [font-family:system-ui,-apple-system,sans-serif]"
+                              : ""
+                          }`}
+                        >
+                          {c.value}
+                        </a>
+                      ) : (
+                        <span className={`text-steel ${isEmail ? "lowercase [font-family:system-ui,-apple-system,sans-serif]" : ""}`}>
+                          {c.value}
+                        </span>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </motion.div>
           )}
         </motion.div>
 
         {/* bottom bar */}
-        <div className="mt-14 flex flex-col-reverse items-start gap-5 border-t border-gunmetal pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col-reverse items-start gap-5 border-t border-gunmetal pt-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-steel">
             ©{year ? ` ${year}` : ""} {SITE.name}. All rights reserved. <span className="text-graphite">·</span> Prices exclusive of GST.
           </p>

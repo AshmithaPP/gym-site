@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { INAUGURATION_OFFER } from "@/lib/pricing";
+import { useEnquiry } from "./Enquiry";
 
 const fmt = (n) => n.toLocaleString("en-IN");
 
@@ -12,6 +13,7 @@ const fmt = (n) => n.toLocaleString("en-IN");
   scrolled past it (hero bottom above the middle of the screen) and hides again on the way back.
 */
 export default function OfferBar() {
+  const openEnquiry = useEnquiry();
   const { scrollY } = useScroll();
   const [show, setShow] = useState(false);
   useMotionValueEvent(scrollY, "change", () => {
@@ -41,8 +43,9 @@ export default function OfferBar() {
           </p>
         </div>
 
-        <motion.a
-          href="#enquiry"
+        <motion.button
+          type="button"
+          onClick={() => openEnquiry("Grand Opening Offer — Annual Membership")}
           whileHover={{ y: -2 }}
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 400, damping: 15 }}
@@ -52,7 +55,7 @@ export default function OfferBar() {
           <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth="2.2">
             <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-        </motion.a>
+        </motion.button>
       </div>
     </motion.div>
   );

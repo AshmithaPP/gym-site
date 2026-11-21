@@ -62,7 +62,7 @@ export default function Navbar({ start }) {
 
         <div className="flex items-center gap-3">
           <Link
-            href="/#enquiry"
+            href="/contact"
             className="btn-metal hidden rounded-md px-5 py-2.5 text-[12px] font-bold uppercase tracking-[0.15em] transition-transform hover:-translate-y-0.5 sm:inline-block"
           >
             Contact
@@ -103,7 +103,7 @@ export default function Navbar({ start }) {
               ))}
               <li className="p-2 sm:hidden">
                 <Link
-                  href="/#enquiry"
+                  href="/contact"
                   onClick={() => setOpen(false)}
                   className="btn-metal block rounded-md py-3 text-center text-xs font-bold uppercase tracking-[0.2em]"
                 >

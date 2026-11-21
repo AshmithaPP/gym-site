@@ -6,6 +6,7 @@ import Navbar from "./Navbar";
 import CrewCarousel from "./CrewCarousel";
 import Footer from "./Footer";
 import WhatsAppButton from "./WhatsAppButton";
+import { useEnquiry } from "./Enquiry";
 
 const EXPO = [0.16, 1, 0.3, 1];
 
@@ -21,6 +22,7 @@ const STANDARDS = [
 ];
 
 export default function AboutExperience() {
+  const openEnquiry = useEnquiry();
   return (
     <>
       <main className="relative overflow-clip">
@@ -85,12 +87,13 @@ export default function AboutExperience() {
               <p className="font-display text-metal text-2xl uppercase sm:text-3xl">Train with the crew</p>
               <p className="mt-2 text-sm text-steel">Tell us your goal and we&apos;ll match you with the right coach.</p>
             </div>
-            <Link
-              href="/#enquiry"
+            <button
+              type="button"
+              onClick={() => openEnquiry("Train with the Crew")}
               className="btn-metal inline-flex shrink-0 items-center gap-3 rounded-md px-6 py-3.5 text-xs font-bold uppercase tracking-[0.2em] transition-transform hover:-translate-y-0.5"
             >
               Enquire now
-            </Link>
+            </button>
           </motion.div>
         </section>
       </main>
